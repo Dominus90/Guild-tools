@@ -816,13 +816,14 @@ const elixirRarities = [
   { id:'immortal',  name:'Immortal',  val:14, checked:false },
   { id:'myth',      name:'Myth',      val:20, checked:false },
   { id:'eternal',   name:'Eternal',   val:28, checked:false },
+  { id:'celestial',   name:'Celestial',   val:36, checked:false },
 ];
 
 const elixirColors = {
   common:'#a0a0a0', good:'#5cbf5c', sturdy:'#00dddd',
   rare:'#32cd32', perfect:'#3090ff', scarce:'#c080d0',
   epic:'#ff8c00', legendary:'#9932cc', immortal:'#ff1493',
-  myth:'#ff4500', eternal:'#f0c040',
+  myth:'#ff4500', eternal:'#f0c040', celestial: '#00c8ff',
 };
 
 const elixirStats = [
@@ -845,6 +846,7 @@ const elixirAbsorb = {
   immortal:  { attack:3010, crit:0.14, talisman:0.014, hp:280000, skill:0.028 },
   myth:      { attack:4300, crit:0.20, talisman:0.020, hp:400000, skill:0.040 },
   eternal:   { attack:6020, crit:0.28, talisman:0.028, hp:560000, skill:0.056 },
+  celestial: { attack:7740, crit:0.36, talisman:0.036, hp:720000, skill:0.072 },
 };
 
 function fmtNum(n) {
