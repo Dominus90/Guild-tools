@@ -525,6 +525,9 @@ select option { background: #111e35; }
   <a class="nav-link" data-page="world" href="#">
     <span class="nav-icon">🌍</span> World Calculator
   </a>
+  <a class="nav-link" data-page="simulator" href="#">
+    <span class="nav-icon">🪽</span> Wing Simulator
+  </a>
   <div class="sidebar-divider"></div>
   <div class="sidebar-section">Links</div>
   <a class="sidebar-ext-link" href="https://www.roblox.com/games/18645473062" target="_blank">🎮 Roblox Game</a>
@@ -724,6 +727,141 @@ select option { background: #111e35; }
       <div id="compare-container"><p style="color:var(--muted);font-size:12px;">No worlds added yet.</p></div>
     </div>
   </div>
+<!-- ===== WING SIMULATOR PAGE ===== -->
+<div class="page" id="page-simulator">
+
+  <!-- Guide Table -->
+  <div class="card">
+    <div class="card-tag">// Reference</div>
+    <div class="card-title">Upgrade Guide</div>
+    <div class="card-desc">WC cost per attempt & pity accumulation per fail</div>
+    <div class="divider"></div>
+    <div class="compare-table-wrap">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Upgrade</th>
+            <th>WC/Click</th>
+            <th>Base Rate</th>
+            <th>+Rate/Fail</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Scarce → Epic</td><td>1</td><td>0.3%</td><td>+0.3%</td></tr>
+          <tr><td>Epic → Legendary</td><td>2</td><td>0.2%</td><td>+0.2%</td></tr>
+          <tr><td>Legendary → Immortal</td><td>4</td><td>0.1%</td><td>+0.1%</td></tr>
+          <tr><td>Immortal → Mythic</td><td>6</td><td>0.04%</td><td>+0.04%</td></tr>
+          <tr><td>Mythic → Eternal</td><td>8</td><td>0.02%</td><td>+0.02%</td></tr>
+          <tr><td>Eternal → Celestial</td><td>10</td><td>0.001%</td><td>+0.001%</td></tr>
+          <tr><td>Celestial → Primordial</td><td>10</td><td>0.0002%</td><td>+0.0002%</td></tr>
+          <tr><td>Primordial → Transcendent</td><td>10</td><td>0.0001%</td><td>+0.0001%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Setup -->
+  <div class="card">
+    <div class="card-tag">// Setup</div>
+    <div class="card-title">Wing Upgrade Simulator</div>
+    <div class="divider"></div>
+
+    <div class="world-grid">
+      <div class="field">
+        <label>Starting Rarity</label>
+        <select id="sim-start-rarity">
+          <option value="0">Scarce</option>
+          <option value="1">Epic</option>
+          <option value="2">Legendary</option>
+          <option value="3">Immortal</option>
+          <option value="4">Mythic</option>
+          <option value="5">Eternal</option>
+          <option value="6">Celestial</option>
+          <option value="7">Primordial</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Target Rarity</label>
+        <select id="sim-target-rarity">
+          <option value="1">Epic</option>
+          <option value="2">Legendary</option>
+          <option value="3">Immortal</option>
+          <option value="4">Mythic</option>
+          <option value="5">Eternal</option>
+          <option value="6">Celestial</option>
+          <option value="7">Primordial</option>
+          <option value="8">Transcendent</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Wing Core (WC) Amount</label>
+      <input type="number" id="sim-wc" value="100" min="1">
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="sim-run-btn">▶ Run Simulation</button>
+      <button class="btn btn-danger" id="sim-reset-btn">↺ Reset</button>
+    </div>
+  </div>
+
+  <!-- Current Status -->
+  <div class="card" id="sim-status-card" style="display:none">
+    <div class="card-tag">// Status</div>
+    <div class="card-title">Current Run</div>
+    <div class="divider"></div>
+    <div class="results-grid">
+      <div class="result-stat">
+        <div class="result-stat-label">Current Rarity</div>
+        <div class="result-stat-val" id="sim-cur-rarity" style="font-size:13px">—</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-stat-label">WC Remaining</div>
+        <div class="result-stat-val" id="sim-wc-left">—</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-stat-label">Current Rate</div>
+        <div class="result-stat-val" id="sim-cur-rate" style="color:var(--gold)">—</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-stat-label">Attempts</div>
+        <div class="result-stat-val" id="sim-attempts">—</div>
+      </div>
+    </div>
+
+    <!-- Step Controls -->
+    <div class="btn-row" style="margin-top:14px">
+      <button class="btn btn-primary" id="sim-step-btn">⚡ Attempt Upgrade</button>
+      <button class="btn" style="background:rgba(0,200,255,0.1);color:var(--accent);border:1px solid var(--accent)" id="sim-auto-btn">⏩ Auto Run</button>
+    </div>
+
+    <!-- Log -->
+    <div style="margin-top:14px">
+      <div class="result-label">Attempt Log</div>
+      <div id="sim-log" style="
+        max-height:160px; overflow-y:auto;
+        background:rgba(0,0,0,0.3);
+        border:1px solid var(--border);
+        border-radius:8px; padding:10px;
+        font-size:11px; line-height:1.9;
+        font-family:'Orbitron',monospace;
+        color:var(--muted);
+      "></div>
+    </div>
+  </div>
+
+  <!-- Stats Summary -->
+  <div class="card" id="sim-stats-card">
+    <div class="card-tag">// Statistics</div>
+    <div class="card-title">WC Usage Per Stage</div>
+    <div class="divider"></div>
+    <div id="sim-stage-stats">
+      <p style="color:var(--muted);font-size:12px;">Run a simulation to see stats.</p>
+    </div>
+  </div>
+
+</div>
 
 </main>
 
@@ -1069,7 +1207,161 @@ function renderCompare() {
     </div>
   `;
 }
+// ===== WING SIMULATOR =====
+const simStages = [
+  { from:'Scarce',     to:'Epic',         wc:1,  base:0.003   },
+  { from:'Epic',       to:'Legendary',    wc:2,  base:0.002   },
+  { from:'Legendary',  to:'Immortal',     wc:4,  base:0.001   },
+  { from:'Immortal',   to:'Mythic',       wc:6,  base:0.0004  },
+  { from:'Mythic',     to:'Eternal',      wc:8,  base:0.0002  },
+  { from:'Eternal',    to:'Celestial',    wc:10, base:0.00001 },
+  { from:'Celestial',  to:'Primordial',   wc:10, base:0.000002},
+  { from:'Primordial', to:'Transcendent', wc:10, base:0.000001},
+];
 
+let simState = null;
+let simAutoTimer = null;
+
+function simInit() {
+  const startIdx = parseInt(document.getElementById('sim-start-rarity').value);
+  const targetIdx= parseInt(document.getElementById('sim-target-rarity').value);
+  const wc       = parseInt(document.getElementById('sim-wc').value) || 0;
+
+  if (targetIdx <= startIdx) {
+    alert('Target must be higher than Starting rarity!'); return;
+  }
+
+  simState = {
+    stageIdx: startIdx,
+    targetIdx,
+    wcLeft: wc,
+    wcTotal: wc,
+    currentRate: simStages[startIdx].base,
+    attempts: 0,
+    stageStats: {},  // { stageIdx: { wc: 0, attempts: 0 } }
+    done: false,
+    outOfWC: false,
+  };
+
+  // init stageStats for each stage
+  for (let i = startIdx; i < targetIdx; i++) {
+    simState.stageStats[i] = { wc: 0, attempts: 0 };
+  }
+
+  document.getElementById('sim-status-card').style.display = '';
+  document.getElementById('sim-log').innerHTML = '';
+  simRenderStatus();
+  renderSimStageStats();
+}
+
+function simAttempt() {
+  if (!simState || simState.done || simState.outOfWC) return;
+
+  const stage = simStages[simState.stageIdx];
+
+  // Check WC
+  if (simState.wcLeft < stage.wc) {
+    simState.outOfWC = true;
+    simLog(`❌ Out of WC! Stopped at <b style="color:var(--accent2)">${stage.from}</b>`, 'fail');
+    simRenderStatus();
+    renderSimStageStats();
+    stopAuto();
+    return;
+  }
+
+  // Deduct WC
+  simState.wcLeft -= stage.wc;
+  simState.attempts++;
+  simState.stageStats[simState.stageIdx].wc += stage.wc;
+  simState.stageStats[simState.stageIdx].attempts++;
+
+  // Roll
+  const roll = Math.random();
+  if (roll < simState.currentRate) {
+    // SUCCESS
+    simLog(`✅ <b style="color:var(--green)">${stage.from} → ${stage.to}</b> (rate: ${(simState.currentRate*100).toFixed(4)}%)`, 'success');
+    simState.stageIdx++;
+    if (simState.stageIdx >= simState.targetIdx) {
+      simState.done = true;
+      simLog(`🎉 <b style="color:var(--gold)">Reached ${simStages[simState.targetIdx-1].to}! Done!</b>`, 'done');
+      stopAuto();
+    } else {
+      simState.currentRate = simStages[simState.stageIdx].base;
+    }
+  } else {
+    // FAIL — pity
+    simState.currentRate += stage.base;
+    simLog(`💢 Failed. Rate now <b style="color:var(--accent2)">${(simState.currentRate*100).toFixed(4)}%</b>`, 'fail');
+  }
+
+  simRenderStatus();
+  renderSimStageStats();
+}
+
+function simLog(msg, type) {
+  const log = document.getElementById('sim-log');
+  const line = document.createElement('div');
+  line.innerHTML = `<span style="color:var(--muted)">#${simState.attempts}</span> ${msg}`;
+  log.appendChild(line);
+  log.scrollTop = log.scrollHeight;
+}
+
+function simRenderStatus() {
+  if (!simState) return;
+  const stage = simStages[Math.min(simState.stageIdx, simStages.length-1)];
+  document.getElementById('sim-cur-rarity').textContent = simState.done ? simStages[simState.targetIdx-1].to : stage.from;
+  document.getElementById('sim-wc-left').textContent    = simState.wcLeft.toLocaleString();
+  document.getElementById('sim-cur-rate').textContent   = simState.done ? '—' : (simState.currentRate*100).toFixed(4)+'%';
+  document.getElementById('sim-attempts').textContent   = simState.attempts.toLocaleString();
+}
+
+function renderSimStageStats() {
+  if (!simState) return;
+  const container = document.getElementById('sim-stage-stats');
+  const startIdx = parseInt(document.getElementById('sim-start-rarity').value);
+  const targetIdx= parseInt(document.getElementById('sim-target-rarity').value);
+
+  let html = '<div class="compare-table-wrap"><table class="compare-table"><thead><tr><th>Stage</th><th>Attempts</th><th>WC Used</th></tr></thead><tbody>';
+  for (let i = startIdx; i < targetIdx; i++) {
+    const s = simState.stageStats[i] || { wc:0, attempts:0 };
+    const done = simState.stageIdx > i;
+    html += `<tr>
+      <td style="color:${done?'var(--green)':'var(--text)'}">${simStages[i].from} → ${simStages[i].to} ${done?'✅':''}</td>
+      <td>${s.attempts}</td>
+      <td>${s.wc}</td>
+    </tr>`;
+  }
+  const wcUsed = simState.wcTotal - simState.wcLeft;
+  html += `</tbody><tfoot><tr style="font-weight:bold">
+    <td style="color:var(--accent)">Total</td>
+    <td style="color:var(--accent)">${simState.attempts}</td>
+    <td style="color:var(--gold)">${wcUsed}</td>
+  </tr></tfoot></table></div>`;
+  container.innerHTML = html;
+}
+
+function stopAuto() {
+  if (simAutoTimer) { clearInterval(simAutoTimer); simAutoTimer = null; }
+  document.getElementById('sim-auto-btn').textContent = '⏩ Auto Run';
+}
+
+document.getElementById('sim-run-btn').addEventListener('click', () => { stopAuto(); simInit(); });
+document.getElementById('sim-reset-btn').addEventListener('click', () => {
+  stopAuto(); simState = null;
+  document.getElementById('sim-status-card').style.display = 'none';
+  document.getElementById('sim-stage-stats').innerHTML = '<p style="color:var(--muted);font-size:12px;">Run a simulation to see stats.</p>';
+  document.getElementById('sim-log').innerHTML = '';
+});
+document.getElementById('sim-step-btn').addEventListener('click', simAttempt);
+document.getElementById('sim-auto-btn').addEventListener('click', () => {
+  if (simAutoTimer) { stopAuto(); return; }
+  if (!simState || simState.done || simState.outOfWC) { simInit(); }
+  document.getElementById('sim-auto-btn').textContent = '⏹ Stop';
+  simAutoTimer = setInterval(() => {
+    simAttempt();
+    if (!simState || simState.done || simState.outOfWC) stopAuto();
+  }, 30);
+});
 // ===== PAGE NAV =====
 document.querySelectorAll('.nav-link[data-page]').forEach(link => {
   link.addEventListener('click', e => {
