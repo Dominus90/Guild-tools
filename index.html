@@ -668,24 +668,25 @@ select option { background: #111e35; }
       <div class="world-grid">
         <div class="field">
           <label>Difficulty</label>
-          <select id="difficulty-select"><option value="">Select...</option></select>
+          <select id="difficulty-select"></select>
         </div>
         <div class="field">
           <label>World</label>
-          <select id="world-select"><option value="">Select...</option></select>
+          <select id="world-select"></select>
         </div>
       </div>
 
       <div class="divider"></div>
-      <div class="result-label">Base Stats</div>
-      <div class="world-grid">
-        <div class="field"><label>Exp / Clear</label><input type="number" id="base-exp" value="0" min="0"></div>
-        <div class="field"><label>Ore / Drop</label><input type="number" id="base-ore" value="0" min="0"></div>
-        <div class="field"><label>Gold / Clear</label><input type="number" id="base-gold" value="0" min="0"></div>
-        <div class="field"><label>Clear Time (sec)</label><input type="number" id="clear-time" value="60" min="1"></div>
+      <div class="result-label">Base Stats (Auto)</div>
+      <div class="results-grid" style="margin-bottom:0">
+        <div class="result-stat"><div class="result-stat-label">Exp / Clear</div><div class="result-stat-val" style="color:var(--accent)" id="base-exp">—</div></div>
+        <div class="result-stat"><div class="result-stat-label">Ore / Drop</div><div class="result-stat-val" style="color:var(--accent)" id="base-ore">—</div></div>
+        <div class="result-stat"><div class="result-stat-label">Gold / Clear</div><div class="result-stat-val" style="color:var(--gold)" id="base-gold">—</div></div>
       </div>
 
       <div class="divider"></div>
+      <div class="field"><label>Clear Time (sec)</label><input type="number" id="clear-time" value="60" min="1"></div>
+
       <div class="result-label">Drop Buff (%)</div>
       <div class="world-grid">
         <div class="field"><label>Gold Drop %</label><input type="number" id="gold-drop" value="0" min="0"></div>
@@ -693,11 +694,10 @@ select option { background: #111e35; }
         <div class="field"><label>Exp Gain %</label><input type="number" id="exp-gain" value="0" min="0"></div>
       </div>
 
-      <div class="divider"></div>
       <div class="result-label">Extra Drop</div>
       <div class="world-grid">
-        <div class="field"><label>Extra Gold</label><input type="number" id="extra-gold" value="0" min="0"></div>
-        <div class="field"><label>Extra Exp</label><input type="number" id="extra-exp" value="0" min="0"></div>
+        <div class="field"><label>Extra Gold Drop</label><input type="number" id="extra-gold" value="0" min="0"></div>
+        <div class="field"><label>Extra Exp Drop</label><input type="number" id="extra-exp" value="0" min="0"></div>
       </div>
     </div>
 
@@ -728,6 +728,7 @@ select option { background: #111e35; }
 </main>
 
 <script>
+
 // ===== WING LOGIC =====
 const WING_LEVEL_MULT = 0.0000555555555555556;
 
