@@ -315,14 +315,68 @@ select option { background: #111e35; }
   margin-top: 6px;
 }
 
-.rb-scarce   { background: rgba(148,163,184,0.12); color: #94a3b8; border: 1px solid #475569; }
-.rb-epic     { background: rgba(255,107,53,0.12);  color: #ff8c5a; border: 1px solid #c45a20; }
-.rb-legendary{ background: rgba(180,110,245,0.12); color: #c084fc; border: 1px solid #7c3aed; }
-.rb-immortal { background: rgba(255,20,147,0.12);  color: #ff69b4; border: 1px solid #c0185a; }
-.rb-myth     { background: rgba(255,69,0,0.12);    color: #ff7043; border: 1px solid #bf360c; }
-.rb-eternal  { background: rgba(240,192,64,0.12);  color: #f0c040; border: 1px solid #a07010; }
-.rb-celestial{ background: rgba(0,200,255,0.12);   color: #00c8ff; border: 1px solid #007fa0; }
+/* Scare - ชมพูอ่อน */
+.rb-scare {
+  background: rgba(255,182,193,0.12);
+  color: #ffb6c1;
+  border: 1px solid #ff8da1;
+}
 
+/* Epic - เหลือง */
+.rb-epic {
+  background: rgba(255,215,0,0.12);
+  color: #ffd700;
+  border: 1px solid #c9a200;
+}
+
+/* Legendary - ม่วง */
+.rb-legendary {
+  background: rgba(180,110,245,0.12);
+  color: #c084fc;
+  border: 1px solid #7c3aed;
+}
+
+/* Immortal - ชมพูเข้ม */
+.rb-immortal {
+  background: rgba(255,20,147,0.12);
+  color: #ff1493;
+  border: 1px solid #c71585;
+}
+
+/* Mythical - ส้ม */
+.rb-mythical {
+  background: rgba(255,140,0,0.12);
+  color: #ff8c00;
+  border: 1px solid #c25e00;
+}
+
+/* Eternal - ทอง */
+.rb-eternal {
+  background: rgba(255,215,0,0.15);
+  color: #f0c040;
+  border: 1px solid #a07010;
+}
+
+/* Celestial - แดง */
+.rb-celestial {
+  background: rgba(255,0,0,0.12);
+  color: #ff4d4d;
+  border: 1px solid #b30000;
+}
+
+/* Primordial - เขียว (เพิ่มใหม่) */
+.rb-primordial {
+  background: rgba(0,255,127,0.12);
+  color: #00ff7f;
+  border: 1px solid #00b35a;
+}
+
+/* Transcendent - น้ำเงิน (เพิ่มใหม่) */
+.rb-transcendent {
+  background: rgba(30,144,255,0.12);
+  color: #1e90ff;
+  border: 1px solid #0b5ed7;
+}
 /* ===== FORMULA HINT ===== */
 .formula-hint {
   margin-top: 12px;
@@ -676,13 +730,16 @@ select option { background: #111e35; }
 const WING_LEVEL_MULT = 0.0000555555555555556;
 
 const wingRarities = {
-  scarce:    { value: 6,  name: 'Scarce',    badge: 'rb-scarce' },
-  epic:      { value: 7,  name: 'Epic',       badge: 'rb-epic' },
-  legendary: { value: 8,  name: 'Legendary',  badge: 'rb-legendary' },
-  immortal:  { value: 9,  name: 'Immortal',   badge: 'rb-immortal' },
-  myth:      { value: 10, name: 'Myth',       badge: 'rb-myth' },
-  eternal:   { value: 11, name: 'Eternal',    badge: 'rb-eternal' },
-  celestial: { value: 12, name: 'Celestial',  badge: 'rb-celestial' },
+  scarce:       { value: 6,  name: 'Scarce',       badge: 'rb-scare' },
+  epic:         { value: 7,  name: 'Epic',         badge: 'rb-epic' },
+  legendary:    { value: 8,  name: 'Legendary',    badge: 'rb-legendary' },
+  immortal:     { value: 9,  name: 'Immortal',     badge: 'rb-immortal' },
+  mythical:     { value: 10, name: 'Mythical',     badge: 'rb-mythical' },
+  eternal:      { value: 11, name: 'Eternal',      badge: 'rb-eternal' },
+  celestial:    { value: 12, name: 'Celestial',    badge: 'rb-celestial' },
+
+  primordial:   { value: 13, name: 'Primordial',   badge: 'rb-primordial' },
+  transcendent: { value: 14, name: 'Transcendent', badge: 'rb-transcendent' },
 };
 
 function wingBase(level, rarityVal) {
