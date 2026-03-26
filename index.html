@@ -1018,10 +1018,12 @@ function calcWorld() {
   const expGain  = parseFloat(document.getElementById('exp-gain').value)  || 0;
   const extraGold= parseFloat(document.getElementById('extra-gold').value)|| 0;
   const extraExp = parseFloat(document.getElementById('extra-exp').value) || 0;
+    // ทำให้ extraExp หาร 5 ก่อน
+  const adjustedExtraExp = Math.floor(extraExp / 5) * 5;
 
-  const xph   = Math.round((baseExp  * (1 + expGain/100) + extraExp)  * clearsPerHour);
-  const oreh  = Math.round((baseOre  * (1 + oreDrop/100))              * clearsPerHour);
-  const goldh = Math.round((baseGold * (1 + goldDrop/100) + extraGold) * clearsPerHour);
+  const xph   = Math.round((baseExp  * (1 + expGain/100) + adjustedExtraExp)  * clearsPerHour);
+  const oreh  = Math.round((baseOre  * (1 + oreDrop/100))                        * clearsPerHour);
+  const goldh = Math.round((baseGold * (1 + goldDrop/100) + extraGold)          * clearsPerHour);
   const clears= Math.round(clearsPerHour);
 
   document.getElementById('result-xp').textContent    = xph.toLocaleString();
