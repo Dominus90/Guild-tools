@@ -505,6 +505,7 @@ select option { background: #111e35; }
   #sidebar-overlay.show { display: block; }
   .coeff-grid { grid-template-columns: repeat(3, 1fr); }
 }
+.hidden { display: none !important; }
 </style>
 </head>
 <body>
@@ -527,6 +528,9 @@ select option { background: #111e35; }
   </a>
   <a class="nav-link" data-page="simulator" href="#">
     <span class="nav-icon">🪽</span> Wing Simulator
+  </a>
+  <a class="nav-link" data-page="reroll" href="#">
+    <span class="nav-icon">🎲</span> Reroll Simulator
   </a>
   <div class="sidebar-divider"></div>
   <div class="sidebar-section">Links</div>
@@ -862,7 +866,181 @@ select option { background: #111e35; }
   </div>
 
 </div>
+<!-- ===== REROLL SIMULATOR PAGE ===== -->
+<div class="page" id="page-reroll">
 
+  <!-- Attribute List -->
+  <div class="card">
+    <div class="card-tag">// Reference</div>
+    <div class="card-title">Attribute List</div>
+    <div class="card-desc">19 attributes · equal drop rate · slots 1-3 cannot be rerolled</div>
+    <div class="divider"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 12px">
+      <div style="font-size:11px;color:var(--muted)">1. Hp Boost</div>
+      <div style="font-size:11px;color:var(--muted)">2. Attack Boost</div>
+      <div style="font-size:11px;color:var(--muted)">3. Dodge Rate</div>
+      <div style="font-size:11px;color:var(--muted)">4. Ignore Dodge Rate</div>
+      <div style="font-size:11px;color:var(--muted)">5. Critical Hit Rate</div>
+      <div style="font-size:11px;color:var(--muted)">6. Critical Hit Damage</div>
+      <div style="font-size:11px;color:var(--muted)">7. Hp Recovery</div>
+      <div style="font-size:11px;color:var(--muted)">8. Reflecting Damage Rate</div>
+      <div style="font-size:11px;color:var(--muted)">9. Reflecting Damage</div>
+      <div style="font-size:11px;color:var(--muted)">10. Talisman Damage</div>
+      <div style="font-size:11px;color:var(--muted)">11. Skill Damage</div>
+      <div style="font-size:11px;color:var(--muted)">12. Boss Dmg Reduction</div>
+      <div style="font-size:11px;color:var(--muted)">13. Damage To Boss</div>
+      <div style="font-size:11px;color:var(--muted)">14. Attack Speed</div>
+      <div style="font-size:11px;color:var(--muted)">15. Ore Drop Rate</div>
+      <div style="font-size:11px;color:var(--muted)">16. Exp Gain Rate</div>
+      <div style="font-size:11px;color:var(--muted)">17. Gold Drop Rate</div>
+      <div style="font-size:11px;color:var(--muted)">18. Extra Gold Drop</div>
+      <div style="font-size:11px;color:var(--muted)">19. Extra Exp Drop</div>
+    </div>
+  </div>
+
+  <!-- Lock Cost Table -->
+  <div class="card">
+    <div class="card-tag">// Cost Table</div>
+    <div class="card-title">Reroll Cost Reference</div>
+    <div class="divider"></div>
+    <div class="compare-table-wrap">
+      <table class="compare-table">
+        <thead><tr><th>Locked Slots</th><th>WC Cost</th></tr></thead>
+        <tbody>
+          <tr><td>0 locked</td><td>0 WC</td></tr>
+          <tr><td>1 locked</td><td>10 WC</td></tr>
+          <tr><td>2 locked</td><td>20 WC</td></tr>
+          <tr><td>3 locked</td><td>40 WC</td></tr>
+          <tr><td>4 locked</td><td>80 WC</td></tr>
+          <tr><td>5 locked</td><td>100 WC</td></tr>
+          <tr><td>6 locked</td><td>120 WC</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:var(--muted);line-height:1.8">
+      Trash Wing cost: Scarce=1 · Epic=2 · Legendary=3 · Immortal=4 · Mythic=5 · Eternal=6 · Celestial=7 · Primordial=8 · Transcendent=9
+    </div>
+  </div>
+
+  <!-- Setup -->
+  <div class="card">
+    <div class="card-tag">// Setup</div>
+    <div class="card-title">Reroll Simulator</div>
+    <div class="divider"></div>
+
+    <div class="world-grid">
+      <div class="field">
+        <label>Wing Rarity</label>
+        <select id="rr-rarity">
+          <option value="0">Scarce (1 slot)</option>
+          <option value="1">Epic (2 slots)</option>
+          <option value="2">Legendary (3 slots)</option>
+          <option value="3">Immortal (4 slots)</option>
+          <option value="4">Mythic (5 slots)</option>
+          <option value="5">Eternal (6 slots)</option>
+          <option value="6">Celestial (7 slots)</option>
+          <option value="7">Primordial (8 slots)</option>
+          <option value="8">Transcendent (9 slots)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>WC Available</label>
+        <input type="number" id="rr-wc" value="1000" min="0">
+      </div>
+    </div>
+    <div class="field">
+      <label>Trash Wings Available</label>
+      <input type="number" id="rr-trash" value="100" min="0">
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="rr-init-btn">▶ Start / Reset</button>
+    </div>
+  </div>
+
+  <!-- Wing Slots -->
+  <div class="card" id="rr-slots-card" style="display:none">
+    <div class="card-tag">// Wing Slots</div>
+    <div class="card-title">Current Attributes</div>
+    <div class="card-desc" style="margin-bottom:0">Slots 1-3 are fixed · Lock desired slots before rerolling</div>
+    <div class="divider"></div>
+
+    <!-- Fixed slots 1-3 -->
+    <div style="margin-bottom:10px">
+      <div class="result-label">Fixed Slots (Cannot Reroll)</div>
+      <div id="rr-fixed-slots" style="display:flex;flex-direction:column;gap:6px"></div>
+    </div>
+
+    <!-- Rerollable slots -->
+    <div>
+      <div class="result-label">Rerollable Slots</div>
+      <div id="rr-slots" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Cost display -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding:10px 14px;background:rgba(0,200,255,0.05);border:1px solid var(--border);border-radius:8px">
+      <div>
+        <div style="font-size:10px;color:var(--muted);letter-spacing:1px">REROLL COST</div>
+        <div style="font-family:'Orbitron',monospace;font-size:15px;color:var(--accent)" id="rr-cost-display">0 WC + 1 Trash</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:10px;color:var(--muted);letter-spacing:1px">REMAINING</div>
+        <div style="font-family:'Orbitron',monospace;font-size:13px;color:var(--text)">
+          <span id="rr-wc-left">—</span> WC · <span id="rr-trash-left">—</span> Trash
+        </div>
+      </div>
+    </div>
+    
+    
+   <!-- Control-->
+<div class="divider"></div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+  <div class="result-label" style="margin:0">Auto Target</div>
+  <button onclick="document.getElementById('rr-targets-wrap').classList.toggle('hidden')" 
+    style="font-size:10px;color:var(--muted);background:none;border:none;cursor:pointer;letter-spacing:1px">
+    SHOW/HIDE
+  </button>
+</div>
+<div id="rr-targets-wrap" class="hidden">
+  <div id="rr-targets" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px"></div>
+</div>
+<div class="btn-row" style="flex-wrap:wrap;gap:8px">
+  <button class="btn btn-primary" id="rr-roll-btn">🎲 Reroll</button>
+  <button class="btn" style="background:rgba(0,200,255,0.1);color:var(--accent);border:1px solid var(--accent)" id="rr-auto-btn">⏩ Auto Run</button>
+  <button class="btn" style="background:rgba(240,192,64,0.1);color:var(--gold);border:1px solid var(--gold)" id="rr-autolock-btn">🔒 Auto Lock</button>
+</div>
+
+    <!-- Log -->
+    <div style="margin-top:12px">
+      <div class="result-label">Roll Log</div>
+      <div id="rr-log" style="
+        max-height:140px;overflow-y:auto;
+        background:rgba(0,0,0,0.3);
+        border:1px solid var(--border);
+        border-radius:8px;padding:10px;
+        font-size:11px;line-height:1.9;
+        font-family:'Orbitron',monospace;
+        color:var(--muted);
+      "></div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="card" id="rr-stats-card" style="display:none">
+    <div class="card-tag">// Statistics</div>
+    <div class="card-title">Session Stats</div>
+    <div class="divider"></div>
+    <div class="results-grid">
+      <div class="result-stat"><div class="result-stat-label">Total Rerolls</div><div class="result-stat-val" id="rr-stat-rolls">0</div></div>
+      <div class="result-stat"><div class="result-stat-label">WC Spent</div><div class="result-stat-val" id="rr-stat-wc">0</div></div>
+      <div class="result-stat"><div class="result-stat-label">Trash Spent</div><div class="result-stat-val" id="rr-stat-trash">0</div></div>
+      <div class="result-stat"><div class="result-stat-label">WC Left</div><div class="result-stat-val" style="color:var(--gold)" id="rr-stat-wcleft">0</div></div>
+    </div>
+  </div>
+
+</div>
 </main>
 
 <script>
@@ -1362,6 +1540,313 @@ document.getElementById('sim-auto-btn').addEventListener('click', () => {
     if (!simState || simState.done || simState.outOfWC) stopAuto();
   }, 30);
 });
+// ===== REROLL SIMULATOR =====
+const ATTRIBUTES = [
+  'Hp Boost','Attack Boost','Dodge Rate','Ignore Dodge Rate',
+  'Critical Hit Rate','Critical Hit Damage','Hp Recovery',
+  'Reflecting Damage Rate','Reflecting Damage','Talisman Damage',
+  'Skill Damage','Boss Dmg Reduction','Damage To Boss','Attack Speed',
+  'Ore Drop Rate','Exp Gain Rate','Gold Drop Rate',
+  'Extra Gold Drop','Extra Exp Drop'
+];
+
+const LOCK_WC_COST = [0, 10, 20, 40, 80, 100, 120];
+const TRASH_COST_BY_RARITY = [1,2,3,4,5,6,7,8,9];
+const SLOTS_BY_RARITY = [1,2,3,4,5,6,7,8,9];
+
+const FIXED_ATTRS = ['Hp','Attack','Attack Boost Multiplier'];
+
+let rrState = null;
+let rrAutoTimer = null;
+
+function rrRandAttr(exclude = []) {
+  const pool = ATTRIBUTES.filter(a => !exclude.includes(a));
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function rrInitSlots(count) {
+  // Each slot gets a random unique attribute
+  const picked = [];
+  const all = [...ATTRIBUTES];
+  // fixed 3
+  const fixed = FIXED_ATTRS.slice();
+  // rerollable slots — must be unique and not overlap with fixed or each other
+  const rerollable = [];
+  const usedPool = [...fixed];
+  for (let i = 0; i < count; i++) {
+    let attr;
+    do { attr = ATTRIBUTES[Math.floor(Math.random() * ATTRIBUTES.length)]; }
+    while (usedPool.includes(attr));
+    usedPool.push(attr);
+    rerollable.push({ attr, locked: false });
+  }
+  return rerollable;
+}
+
+function rrInit() {
+  if (rrAutoTimer) { clearInterval(rrAutoTimer); rrAutoTimer = null; }
+
+  const rarityIdx  = parseInt(document.getElementById('rr-rarity').value);
+  const wcAvail    = parseInt(document.getElementById('rr-wc').value) || 0;
+  const trashAvail = parseInt(document.getElementById('rr-trash').value) || 0;
+  const slotCount  = SLOTS_BY_RARITY[rarityIdx];
+  const trashCost  = TRASH_COST_BY_RARITY[rarityIdx];
+
+  rrState = {
+    rarityIdx, slotCount, trashCost,
+    wcLeft: wcAvail, trashLeft: trashAvail,
+    wcSpent: 0, trashSpent: 0, rolls: 0,autoLock: false,
+    slots: rrInitSlots(slotCount),
+  };
+
+  document.getElementById('rr-slots-card').style.display = '';
+  document.getElementById('rr-stats-card').style.display = '';
+  document.getElementById('rr-log').innerHTML = '';
+  document.getElementById('rr-stop-btn').style.display = 'none';
+  document.getElementById('rr-auto-btn').textContent = '⏩ Auto';
+
+  rrRenderSlots();
+  rrUpdateCost();
+  rrUpdateStats();
+}
+
+function rrRenderSlots() {
+  if (!rrState) return;
+
+  // Fixed slots
+  const fixedContainer = document.getElementById('rr-fixed-slots');
+  fixedContainer.innerHTML = FIXED_ATTRS.map((a, i) => `
+    <div style="
+      display:flex;align-items:center;gap:10px;
+      padding:8px 12px;border-radius:8px;
+      background:rgba(255,255,255,0.02);
+      border:1px solid var(--border);
+      opacity:0.5;
+    ">
+      <span style="font-size:10px;color:var(--muted);font-family:'Orbitron',monospace;width:18px">${i+1}</span>
+      <span style="font-size:12px;color:var(--muted)">🔒 ${a}</span>
+    </div>
+  `).join('');
+
+  // Rerollable slots
+  const container = document.getElementById('rr-slots');
+  container.innerHTML = rrState.slots.map((slot, i) => `
+    <div style="
+      display:flex;align-items:center;gap:10px;
+      padding:10px 12px;border-radius:8px;
+      background:${slot.locked ? 'rgba(0,200,255,0.08)' : 'rgba(255,255,255,0.03)'};
+      border:1px solid ${slot.locked ? 'var(--accent)' : 'var(--border)'};
+      transition:all 0.2s;
+    " id="rr-slot-${i}">
+      <span style="font-size:10px;color:var(--muted);font-family:'Orbitron',monospace;width:18px">${i+4}</span>
+      <select id="rr-slot-sel-${i}" style="
+        flex:1;background:transparent;border:none;
+        color:${slot.locked ? 'var(--accent)' : 'var(--text)'};
+        font-size:12px;font-family:'Exo 2',sans-serif;
+        outline:none;cursor:pointer;padding:0;
+      " onchange="rrState.slots[${i}].attr=this.value">
+        ${ATTRIBUTES.map(a => `<option value="${a}" ${a===slot.attr?'selected':''}>${a}</option>`).join('')}
+      </select>
+      <button onclick="rrToggleLock(${i})" style="
+        padding:4px 10px;border-radius:6px;border:none;cursor:pointer;
+        font-size:10px;font-weight:600;letter-spacing:1px;
+        background:${slot.locked ? 'rgba(0,200,255,0.2)' : 'rgba(255,255,255,0.06)'};
+        color:${slot.locked ? 'var(--accent)' : 'var(--muted)'};
+        transition:all 0.15s;
+      ">${slot.locked ? '🔒 LOCK' : '🔓 LOCK'}</button>
+    </div>
+  `).join('');
+}
+
+function rrToggleLock(idx) {
+  if (!rrState) return;
+  const lockedCount = rrState.slots.filter(s => s.locked).length;
+  if (!rrState.slots[idx].locked && lockedCount >= 6) {
+    alert('Maximum 6 slots can be locked!'); return;
+  }
+  rrState.slots[idx].locked = !rrState.slots[idx].locked;
+  rrRenderSlots();
+  rrUpdateCost();
+}
+
+function rrGetCost() {
+  if (!rrState) return { wc: 0, trash: 0 };
+  const locked = rrState.slots.filter(s => s.locked).length;
+  return {
+    wc: LOCK_WC_COST[Math.min(locked, 6)],
+    trash: rrState.trashCost,
+  };
+}
+
+function rrUpdateCost() {
+  const { wc, trash } = rrGetCost();
+  document.getElementById('rr-cost-display').textContent = `${wc} WC + ${trash} Trash`;
+  document.getElementById('rr-wc-left').textContent = rrState?.wcLeft.toLocaleString() ?? '—';
+  document.getElementById('rr-trash-left').textContent = rrState?.trashLeft.toLocaleString() ?? '—';
+}
+
+function rrUpdateStats() {
+  if (!rrState) return;
+  document.getElementById('rr-stat-rolls').textContent   = rrState.rolls.toLocaleString();
+  document.getElementById('rr-stat-wc').textContent      = rrState.wcSpent.toLocaleString();
+  document.getElementById('rr-stat-trash').textContent   = rrState.trashSpent.toLocaleString();
+  document.getElementById('rr-stat-wcleft').textContent  = rrState.wcLeft.toLocaleString();
+}
+function rrLog(msg) {
+  const log = document.getElementById('rr-log');
+  const div = document.createElement('div');
+  div.innerHTML = msg;
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+}
+function rrRenderTargets() {
+  const container = document.getElementById('rr-targets');
+  container.innerHTML = ATTRIBUTES.map(a => `
+    <label style="
+      display:flex;align-items:center;gap:5px;
+      padding:4px 10px;border-radius:6px;cursor:pointer;
+      border:1px solid var(--border);font-size:11px;
+      background:rgba(255,255,255,0.02);color:var(--muted);
+      user-select:none;transition:all 0.15s;
+    " id="rr-target-label-${a.replace(/\s+/g,'_')}">
+      <input type="checkbox" id="rr-target-${a.replace(/\s+/g,'_')}" value="${a}"
+        style="accent-color:var(--accent)"
+        onchange="rrUpdateTargetLabel('${a}')">
+      ${a}
+    </label>
+  `).join('');
+}
+
+function rrUpdateTargetLabel(attr) {
+  const id = attr.replace(/\s+/g,'_');
+  const cb = document.getElementById(`rr-target-${id}`);
+  const label = document.getElementById(`rr-target-label-${id}`);
+  label.style.borderColor = cb.checked ? 'var(--accent)' : 'var(--border)';
+  label.style.color = cb.checked ? 'var(--accent)' : 'var(--muted)';
+  label.style.background = cb.checked ? 'rgba(0,200,255,0.08)' : 'rgba(255,255,255,0.02)';
+}
+
+function rrGetTargets() {
+  return ATTRIBUTES.filter(a => {
+    const cb = document.getElementById(`rr-target-${a.replace(/\s+/g,'_')}`);
+    return cb && cb.checked;
+  });
+}
+
+// แทนที่ฟังก์ชัน rrRoll() ทั้งหมด
+function rrRoll() {
+  if (!rrState) return;
+  const { wc, trash } = rrGetCost();
+
+  if (rrState.wcLeft < wc || rrState.trashLeft < trash) {
+    rrLog(`❌ Not enough ${rrState.wcLeft < wc ? 'WC' : 'Trash Wings'}! Auto stopped.`);
+    rrStopAuto();
+    return;
+  }
+
+  rrState.wcLeft    -= wc;
+  rrState.trashLeft -= trash;
+  rrState.wcSpent   += wc;
+  rrState.trashSpent+= trash;
+  rrState.rolls++;
+  
+const changed = [];
+rrState.slots.forEach((slot, i) => {
+  if (slot.locked) return;
+  const newAttr = ATTRIBUTES[Math.floor(Math.random() * ATTRIBUTES.length)];
+  if (newAttr !== slot.attr) changed.push(`Slot ${i+4}: ${newAttr}`);
+  slot.attr = newAttr;
+});
+
+  rrLog(`#${rrState.rolls} → ${changed.length ? changed.join(' · ') : 'No change'}`);
+
+  // Check targets
+  const targets = rrGetTargets();
+  if (targets.length > 0) {
+    const currentAttrs = rrState.slots.filter(s => !s.locked).map(s => s.attr);
+    const matched = targets.filter(t => currentAttrs.includes(t));
+    const allFound = matched.length === targets.length;
+
+    if (rrState.autoLock && matched.length > 0) {
+      // Auto Lock — lock slots ที่ match target
+      rrState.slots.forEach(slot => {
+        if (matched.includes(slot.attr)) slot.locked = true;
+      });
+      rrLog(`🔒 Auto Locked: ${matched.join(', ')}`);
+
+      if (allFound) {
+        rrLog(`✅ All targets found & locked! Rolling for remaining...`);
+        // ถ้า lock ครบ 6 แล้ว หยุด
+        const lockedCount = rrState.slots.filter(s => s.locked).length;
+        if (lockedCount >= 6 || rrState.slots.every(s => s.locked)) {
+          rrLog(`🎉 All target slots locked! Done!`);
+          rrStopAuto();
+        }
+      }
+    } else if (!rrState.autoLock && allFound) {
+      // Auto Run only — หยุดเมื่อเจอทุก target
+      rrLog(`🎉 All targets found! Stopped.`);
+      rrStopAuto();
+    }
+  }
+
+  rrRenderSlots();
+  rrUpdateCost();
+  rrUpdateStats();
+}
+
+// แทนที่ rrStopAuto()
+function rrStopAuto() {
+  if (rrAutoTimer) { clearInterval(rrAutoTimer); rrAutoTimer = null; }
+  document.getElementById('rr-auto-btn').textContent = '⏩ Auto Run';
+  document.getElementById('rr-auto-btn').style.background = 'rgba(0,200,255,0.1)';
+  if (rrState) rrState.autoLock = false;
+  document.getElementById('rr-autolock-btn').style.background = 'rgba(240,192,64,0.1)';
+  document.getElementById('rr-autolock-btn').textContent = '🔒 Auto Lock';
+}
+
+// แทนที่ event listeners ของ auto ทั้งหมด
+document.getElementById('rr-init-btn').addEventListener('click', () => {
+  rrStopAuto(); rrInit(); rrRenderTargets();
+});
+document.getElementById('rr-roll-btn').addEventListener('click', rrRoll);
+
+document.getElementById('rr-auto-btn').addEventListener('click', () => {
+  if (rrAutoTimer) { rrStopAuto(); return; }
+  if (!rrState) { rrInit(); rrRenderTargets(); }
+  document.getElementById('rr-auto-btn').textContent = '⏸ Pause';
+  document.getElementById('rr-auto-btn').style.background = 'rgba(0,200,255,0.2)';
+  rrAutoTimer = setInterval(() => {
+    const { wc, trash } = rrGetCost();
+    if (rrState.wcLeft < wc || rrState.trashLeft < trash) { rrStopAuto(); return; }
+    rrRoll();
+  }, 80);
+});
+
+document.getElementById('rr-autolock-btn').addEventListener('click', () => {
+  if (!rrState) { rrInit(); rrRenderTargets(); }
+  rrState.autoLock = !rrState.autoLock;
+  const btn = document.getElementById('rr-autolock-btn');
+
+  if (rrState.autoLock) {
+    btn.textContent = '🔒 Auto Lock ON';
+    btn.style.background = 'rgba(240,192,64,0.25)';
+    // ถ้ายังไม่ได้ run ให้ run ด้วย
+    if (!rrAutoTimer) {
+      document.getElementById('rr-auto-btn').textContent = '⏸ Pause';
+      document.getElementById('rr-auto-btn').style.background = 'rgba(0,200,255,0.2)';
+      rrAutoTimer = setInterval(() => {
+        const { wc, trash } = rrGetCost();
+        if (rrState.wcLeft < wc || rrState.trashLeft < trash) { rrStopAuto(); return; }
+        rrRoll();
+      }, 80);
+    }
+  } else {
+    btn.textContent = '🔒 Auto Lock';
+    btn.style.background = 'rgba(240,192,64,0.1)';
+  }
+});
+
 // ===== PAGE NAV =====
 document.querySelectorAll('.nav-link[data-page]').forEach(link => {
   link.addEventListener('click', e => {
@@ -1402,7 +1887,7 @@ populateWingSelects();
 calcCoefficient();
 calcATBM();
 initElixir();
-initWorld();
+initWorld();// เพิ่มบรรทัดนี้
 </script>
 </body>
 </html>
