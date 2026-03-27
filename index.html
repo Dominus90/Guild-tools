@@ -35,6 +35,15 @@ body {
   overflow-x: hidden;
 }
 
+@keyframes rgb-glow {
+  0%   { box-shadow: 0 0 20px rgba(255,0,100,0.5); border-color: rgba(255,0,100,0.6); }
+  25%  { box-shadow: 0 0 20px rgba(0,200,255,0.5); border-color: rgba(0,200,255,0.6); }
+  50%  { box-shadow: 0 0 20px rgba(100,255,0,0.5); border-color: rgba(100,255,0,0.6); }
+  75%  { box-shadow: 0 0 20px rgba(255,180,0,0.5); border-color: rgba(255,180,0,0.6); }
+  100% { box-shadow: 0 0 20px rgba(255,0,100,0.5); border-color: rgba(255,0,100,0.6); }
+}
+.rgb-card { animation: rgb-glow 2s linear infinite; }
+
 /* BG pattern */
 body::after {
   content: '';
@@ -531,6 +540,9 @@ select option { background: #111e35; }
   </a>
   <a class="nav-link" data-page="reroll" href="#">
     <span class="nav-icon">🎲</span> Reroll Simulator
+  </a>
+  <a class="nav-link" data-page="absorb" href="#">
+    <span class="nav-icon">💊</span> Absorb Analysis
   </a>
   <div class="sidebar-divider"></div>
   <div class="sidebar-section">Links</div>
@@ -1041,6 +1053,102 @@ select option { background: #111e35; }
   </div>
 
 </div>
+
+<!-- ===== ABSORB ANALYSIS PAGE ===== -->
+<div class="page" id="page-absorb">
+
+  <div class="card">
+    <div class="card-tag">// Setup</div>
+    <div class="card-title">Absorb Analysis</div>
+    <div class="card-desc">1p = Attack 215 · HP 20,000 · Crit 0.01% · Skill 0.002% · Talisman 0.001%</div>
+    <div class="divider"></div>
+
+    <!-- HP -->
+    <div class="result-label">HP</div>
+    <div class="world-grid" style="margin-bottom:14px">
+      <div class="field">
+        <label>Current</label>
+        <input type="text" id="ab-hp-cur" placeholder="e.g. 2870B">
+      </div>
+      <div class="field">
+        <label>Max</label>
+        <input type="text" id="ab-hp-max" placeholder="e.g. 4040B">
+      </div>
+    </div>
+
+    <!-- Attack -->
+    <div class="result-label">Attack</div>
+    <div class="world-grid" style="margin-bottom:14px">
+      <div class="field">
+        <label>Current</label>
+        <input type="text" id="ab-atk-cur" placeholder="e.g. 2970M">
+      </div>
+      <div class="field">
+        <label>Max</label>
+        <input type="text" id="ab-atk-max" placeholder="e.g. 4171M">
+      </div>
+    </div>
+
+    <!-- Crit -->
+    <div class="result-label">Critical Hit Damage (%)</div>
+    <div class="world-grid" style="margin-bottom:14px">
+      <div class="field">
+        <label>Current</label>
+        <input type="number" id="ab-crit-cur" placeholder="82415" step="0.01">
+      </div>
+      <div class="field">
+        <label>Max</label>
+        <input type="number" id="ab-crit-max" placeholder="82415" step="0.01">
+      </div>
+    </div>
+
+    <!-- Skill -->
+    <div class="result-label">Skill Damage (%)</div>
+    <div class="world-grid" style="margin-bottom:14px">
+      <div class="field">
+        <label>Current</label>
+        <input type="number" id="ab-skill-cur" placeholder="16483" step="0.001">
+      </div>
+      <div class="field">
+        <label>Max</label>
+        <input type="number" id="ab-skill-max" placeholder="16483" step="0.001">
+      </div>
+    </div>
+
+    <!-- Talisman -->
+    <div class="result-label">Talisman Damage (%)</div>
+    <div class="world-grid" style="margin-bottom:14px">
+      <div class="field">
+        <label>Current</label>
+        <input type="number" id="ab-tal-cur" placeholder="8241.5" step="0.001">
+      </div>
+      <div class="field">
+        <label>Max</label>
+        <input type="number" id="ab-tal-max" placeholder="8241.5" step="0.001">
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="ab-calc-btn" style="width:100%">📊 Analyze</button>
+  </div>
+
+  <!-- Results card — styled like in-game -->
+  <div class="card" id="ab-result-card" style="display:none">
+    <div class="card-tag">// Result</div>
+    <div class="card-title">Points Needed to Max</div>
+    <div class="divider"></div>
+    <div id="ab-stat-list" style="display:flex;flex-direction:column;gap:10px"></div>
+    <div class="divider"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:rgba(0,200,255,0.06);border:1px solid var(--border);border-radius:10px">
+      <div style="font-size:13px;color:var(--muted);font-weight:600;letter-spacing:1px">TOTAL POINTS NEEDED</div>
+      <div style="font-family:'Orbitron',monospace;font-size:20px;font-weight:700;color:var(--gold)" id="ab-total-p">0p</div>
+    </div>
+    <div style="margin-top:10px;font-size:10px;color:var(--muted);text-align:center;letter-spacing:1px">
+      Higher levels allow for the absorption of more elixirs
+    </div>
+  </div>
+
+</div>
+
 </main>
 
 <script>
@@ -1844,6 +1952,108 @@ document.getElementById('rr-autolock-btn').addEventListener('click', () => {
     btn.style.background = 'rgba(240,192,64,0.1)';
   }
 });
+
+// ===== ABSORB ANALYSIS =====
+const AB_PER_P = {
+  attack: 215,
+  hp: 21500,
+  crit: 0.01,
+  skill: 0.002,
+  talisman: 0.001,
+};
+
+function abParseVal(str) {
+  if (!str) return 0;
+  str = str.toString().trim().toUpperCase();
+  const num = parseFloat(str);
+  if (isNaN(num)) return 0;
+  if (str.endsWith('T')) return num * 1e12;
+  if (str.endsWith('B')) return num * 1e9;
+  if (str.endsWith('M')) return num * 1e6;
+  if (str.endsWith('K')) return num * 1e3;
+  return num;
+}
+
+function abFormatVal(n, isPercent) {
+  if (isPercent) return n.toLocaleString(undefined, {maximumFractionDigits:3}) + '%';
+  // HP/Attack — use game-style K/M/B/T
+  if (n >= 1e12) return (n/1e12).toLocaleString(undefined,{maximumFractionDigits:3}) + 'T';
+  if (n >= 1e9)  return (n/1e9).toLocaleString(undefined,{maximumFractionDigits:3}) + 'B';
+  if (n >= 1e6)  return (n/1e6).toLocaleString(undefined,{maximumFractionDigits:3}) + 'M';
+  if (n >= 1e3)  return (n/1e3).toLocaleString(undefined,{maximumFractionDigits:3}) + 'K';
+  return n.toLocaleString();
+}
+
+function abBarColor(pct) {
+  return pct >= 100 ? '#f0c040' : '#00c8ff';
+}
+
+function abCalc() {
+  const stats = [
+    { id:'hp',       label:'HP',                   cur: abParseVal(document.getElementById('ab-hp-cur').value),  max: abParseVal(document.getElementById('ab-hp-max').value),  perP: AB_PER_P.hp,       isPercent: false },
+    { id:'attack',   label:'Attack',               cur: abParseVal(document.getElementById('ab-atk-cur').value), max: abParseVal(document.getElementById('ab-atk-max').value), perP: AB_PER_P.attack,   isPercent: false },
+    { id:'crit',     label:'Critical Hit Damage',  cur: parseFloat(document.getElementById('ab-crit-cur').value)||0,  max: parseFloat(document.getElementById('ab-crit-max').value)||0,  perP: AB_PER_P.crit,     isPercent: true },
+    { id:'skill',    label:'Skill Damage',         cur: parseFloat(document.getElementById('ab-skill-cur').value)||0, max: parseFloat(document.getElementById('ab-skill-max').value)||0, perP: AB_PER_P.skill,    isPercent: true },
+    { id:'talisman', label:'Talisman Damage',      cur: parseFloat(document.getElementById('ab-tal-cur').value)||0,  max: parseFloat(document.getElementById('ab-tal-max').value)||0,  perP: AB_PER_P.talisman, isPercent: true },
+  ];
+
+  let totalP = 0;
+  const container = document.getElementById('ab-stat-list');
+  container.innerHTML = '';
+
+  stats.forEach(s => {
+    const diff = Math.max(0, s.max - s.cur);
+    const pNeeded = s.perP > 0 ? Math.ceil(diff / s.perP) : 0;
+    const pAbsorbed = s.max > 0 ? Math.floor(s.cur / s.perP) : 0;
+    totalP += pNeeded;
+    const pct = s.max > 0 ? Math.min(100, (s.cur / s.max) * 100) : 100;
+    const isMaxed = pct >= 100;
+    const color = abBarColor(pct);
+    const curFmt = abFormatVal(s.cur, s.isPercent);
+    const maxFmt = abFormatVal(s.max, s.isPercent);
+
+    container.innerHTML += `
+      <div style="
+        background:rgba(255,255,255,0.03);
+        border:1px solid ${isMaxed ? 'rgba(240,192,64,0.4)' : 'var(--border)'};
+        border-radius:10px;
+        padding:12px 14px;
+        ${isMaxed ? 'box-shadow:0 0 12px rgba(240,192,64,0.15)' : ''}
+      ">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+          <span style="font-weight:700;font-size:14px;color:${isMaxed ? '#f0c040' : 'var(--white)'}">
+            ${s.label} ${isMaxed ? '✨' : ''}
+          </span>
+          <span style="font-family:'Orbitron',monospace;font-size:12px;color:${color}">
+            ${pNeeded > 0 ? '+' + pNeeded.toLocaleString() + 'p needed' : 'MAXED'}
+          </span>
+        </div>
+        <div style="background:rgba(0,0,0,0.3);border-radius:20px;height:10px;margin-bottom:6px;overflow:hidden">
+          <div style="height:100%;width:${pct.toFixed(1)}%;background:${color};border-radius:20px;transition:width 0.4s ease"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:'Orbitron',monospace">
+          <span>${curFmt} / ${maxFmt}</span>
+          <span style="color:${isMaxed ? '#f0c040' : 'var(--muted)'}">absorbed: ${pAbsorbed.toLocaleString()}p</span>
+        </div>
+      </div>
+    `;
+    const allMaxed = stats.every(s => s.max > 0 && s.cur >= s.max);
+  const resultCard = document.getElementById('ab-result-card');
+  if (allMaxed) {
+    resultCard.classList.add('rgb-card');
+    document.getElementById('ab-total-p').textContent = '✨ ALL MAXED!';
+  } else {
+    resultCard.classList.remove('rgb-card');
+    document.getElementById('ab-total-p').textContent = totalP.toLocaleString() + 'p';
+  }
+  resultCard.style.display = '';
+  });
+
+  document.getElementById('ab-total-p').textContent = totalP.toLocaleString() + 'p';
+  document.getElementById('ab-result-card').style.display = '';
+}
+
+document.getElementById('ab-calc-btn').addEventListener('click', abCalc);
 
 // ===== PAGE NAV =====
 document.querySelectorAll('.nav-link[data-page]').forEach(link => {
