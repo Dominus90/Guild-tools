@@ -1602,12 +1602,10 @@ function rrInit() {
   document.getElementById('rr-slots-card').style.display = '';
   document.getElementById('rr-stats-card').style.display = '';
   document.getElementById('rr-log').innerHTML = '';
-  document.getElementById('rr-stop-btn').style.display = 'none';
-  document.getElementById('rr-auto-btn').textContent = '⏩ Auto';
-
   rrRenderSlots();
   rrUpdateCost();
   rrUpdateStats();
+  rrLog(`🎲 Initial attributes rolled — free!`);
 }
 
 function rrRenderSlots() {
