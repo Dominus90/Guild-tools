@@ -1443,10 +1443,9 @@ function calcWorld() {
   const extraGold   = parseFloat(document.getElementById('extra-gold').value) || 0;
 
   const timeFactor  = clearTime > 0 ? 3600 / (clearTime + 5) : 0;
-
-  const xph   = timeFactor * (stats.xp + 460 * extraExp) * expGainRate;
+  const xph   = timeFactor * (stats.xp * expGainRate + (extraExp * 460));
   const oreh  = timeFactor * stats.ore * oreDropRate;
-  const goldh = timeFactor * (stats.coins + 460 * extraGold) * goldDropRate;
+  const goldh = timeFactor * (stats.coins * goldDropRate + (extraGold * 460));
   const clears= timeFactor;
 
   // show base stats
