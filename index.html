@@ -26,19 +26,6 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-.cv-example-btn {
-  display:flex;flex-direction:column;gap:3px;
-  padding:10px 14px;border-radius:8px;
-  background:rgba(0,200,255,0.05);
-  border:1px solid var(--border);
-  cursor:pointer;text-align:left;
-  transition:all 0.15s;width:100%;
-}
-.cv-example-btn:hover, .cv-example-btn:active {
-  border-color:var(--accent);
-  background:rgba(0,200,255,0.1);
-}
-
 body {
   background: var(--bg);
   color: var(--text);
@@ -47,6 +34,15 @@ body {
   display: flex;
   overflow-x: hidden;
 }
+
+@keyframes rgb-glow {
+  0%   { box-shadow: 0 0 20px rgba(255,0,100,0.5); border-color: rgba(255,0,100,0.6); }
+  25%  { box-shadow: 0 0 20px rgba(0,200,255,0.5); border-color: rgba(0,200,255,0.6); }
+  50%  { box-shadow: 0 0 20px rgba(100,255,0,0.5); border-color: rgba(100,255,0,0.6); }
+  75%  { box-shadow: 0 0 20px rgba(255,180,0,0.5); border-color: rgba(255,180,0,0.6); }
+  100% { box-shadow: 0 0 20px rgba(255,0,100,0.5); border-color: rgba(255,0,100,0.6); }
+}
+.rgb-card { animation: rgb-glow 2s linear infinite; }
 
 /* BG pattern */
 body::after {
@@ -545,8 +541,8 @@ select option { background: #111e35; }
   <a class="nav-link" data-page="reroll" href="#">
     <span class="nav-icon">🎲</span> Reroll Simulator
   </a>
-  <a class="nav-link" data-page="convert" href="#">
-    <span class="nav-icon">🔄</span> Convert Elixir
+  <a class="nav-link" data-page="absorb" href="#">
+    <span class="nav-icon">💊</span> Absorb Analysis
   </a>
   <div class="sidebar-divider"></div>
   <div class="sidebar-section">Links</div>
@@ -1058,86 +1054,96 @@ select option { background: #111e35; }
 
 </div>
 
-<!-- ===== CONVERT ELIXIR PAGE ===== -->
-<div class="page" id="page-convert">
+<!-- ===== ABSORB ANALYSIS PAGE ===== -->
+<div class="page" id="page-absorb">
 
-  <!-- Example -->
   <div class="card">
-    <div class="card-tag">// How to Use</div>
-    <div class="card-title">Examples</div>
-    <div class="card-desc">Tap an example to load it automatically</div>
+    <div class="card-tag">// Setup</div>
+    <div class="card-title">Absorb Analysis</div>
+    <div class="card-desc">1p = Attack 215 · HP 20,000 · Crit 0.01% · Skill 0.002% · Talisman 0.001%</div>
     <div class="divider"></div>
-    <div style="display:flex;flex-direction:column;gap:8px">
 
-      <div style="font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:2px">COMMON CONVERSIONS</div>
-
-      <button class="cv-example-btn" onclick="cvLoadExample('cd_atk')">
-        <span style="color:var(--accent);font-family:'Orbitron',monospace;font-size:12px">cv 2M CD → ATK</span>
-        <span style="color:var(--muted);font-size:10px">rate 1 : 0.6</span>
-      </button>
-
-      <button class="cv-example-btn" onclick="cvLoadExample('cd_ts')">
-        <span style="color:var(--accent);font-family:'Orbitron',monospace;font-size:12px">cv 2M CD → T/S</span>
-        <span style="color:var(--muted);font-size:10px">rate 1 : 1.6 · split TD+SD equally</span>
-      </button>
-
-      <button class="cv-example-btn" onclick="cvLoadExample('cd_ts_custom')">
-        <span style="color:var(--accent);font-family:'Orbitron',monospace;font-size:12px">cv 2M CD → T/S (custom split)</span>
-        <span style="color:var(--muted);font-size:10px">rate 1 : 1.6 · TD 3M + SD 200K</span>
-      </button>
-
-      <button class="cv-example-btn" onclick="cvLoadExample('multi')">
-        <span style="color:var(--accent);font-family:'Orbitron',monospace;font-size:12px">cv 5M CD → ATK + T/S</span>
-        <span style="color:var(--muted);font-size:10px">multiple converts at once</span>
-      </button>
-
-    </div>
-  </div>
-
-  <!-- Input -->
-  <div class="card">
-    <div class="card-tag">// Input</div>
-    <div class="card-title">I Have</div>
-    <div class="divider"></div>
-    <div class="world-grid">
+    <!-- HP -->
+    <div class="result-label">HP</div>
+    <div class="world-grid" style="margin-bottom:14px">
       <div class="field">
-        <label>Elixir Type</label>
-        <select id="cv-from-type">
-          <option value="hp">HP</option>
-          <option value="atk">ATK</option>
-          <option value="cd">CD · Crit Dmg</option>
-          <option value="sd">SD · Skill Dmg</option>
-          <option value="td">TD · Talisman Dmg</option>
-        </select>
+        <label>Current</label>
+        <input type="text" id="ab-hp-cur" placeholder="e.g. 2870B">
       </div>
       <div class="field">
-        <label>Amount</label>
-        <input type="number" id="cv-from-amt" placeholder="e.g. 2000000" min="0">
+        <label>Max</label>
+        <input type="text" id="ab-hp-max" placeholder="e.g. 4040B">
       </div>
     </div>
+
+    <!-- Attack -->
+    <div class="result-label">Attack</div>
+    <div class="world-grid" style="margin-bottom:14px">
+      <div class="field">
+        <label>Current</label>
+        <input type="text" id="ab-atk-cur" placeholder="e.g. 2970M">
+      </div>
+      <div class="field">
+        <label>Max</label>
+        <input type="text" id="ab-atk-max" placeholder="e.g. 4171M">
+      </div>
+    </div>
+
+    <!-- Crit -->
+    <div class="result-label">Critical Hit Damage (%)</div>
+    <div class="world-grid" style="margin-bottom:14px">
+      <div class="field">
+        <label>Current</label>
+        <input type="number" id="ab-crit-cur" placeholder="82415" step="0.01">
+      </div>
+      <div class="field">
+        <label>Max</label>
+        <input type="number" id="ab-crit-max" placeholder="82415" step="0.01">
+      </div>
+    </div>
+
+    <!-- Skill -->
+    <div class="result-label">Skill Damage (%)</div>
+    <div class="world-grid" style="margin-bottom:14px">
+      <div class="field">
+        <label>Current</label>
+        <input type="number" id="ab-skill-cur" placeholder="16483" step="0.001">
+      </div>
+      <div class="field">
+        <label>Max</label>
+        <input type="number" id="ab-skill-max" placeholder="16483" step="0.001">
+      </div>
+    </div>
+
+    <!-- Talisman -->
+    <div class="result-label">Talisman Damage (%)</div>
+    <div class="world-grid" style="margin-bottom:14px">
+      <div class="field">
+        <label>Current</label>
+        <input type="number" id="ab-tal-cur" placeholder="8241.5" step="0.001">
+      </div>
+      <div class="field">
+        <label>Max</label>
+        <input type="number" id="ab-tal-max" placeholder="8241.5" step="0.001">
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="ab-calc-btn" style="width:100%">📊 Analyze</button>
   </div>
 
-  <!-- CV Settings -->
-  <div class="card">
-    <div class="card-tag">// Convert To</div>
-    <div class="card-title">Convert Settings</div>
-    <div class="card-desc">Add multiple conversions · set rate freely</div>
-    <div class="divider"></div>
-    <div id="cv-rows" style="display:flex;flex-direction:column;gap:10px"></div>
-    <button class="btn btn-primary" id="cv-add-btn" style="width:100%;margin-top:12px">+ Add Conversion</button>
-  </div>
-
-  <!-- Calculate -->
-  <button class="btn btn-primary" id="cv-calc-btn" style="width:100%;margin-bottom:18px">🔄 Calculate</button>
-
-  <!-- Result -->
-  <div class="card" id="cv-result-card" style="display:none">
+  <!-- Results card — styled like in-game -->
+  <div class="card" id="ab-result-card" style="display:none">
     <div class="card-tag">// Result</div>
-    <div class="card-title">Conversion Result</div>
+    <div class="card-title">Points Needed to Max</div>
     <div class="divider"></div>
-    <div id="cv-result-list" style="display:flex;flex-direction:column;gap:8px"></div>
-    <div style="margin-top:12px;font-size:10px;color:var(--muted);text-align:center;letter-spacing:1px">
-      Numbers may be rounded · Rates set by user
+    <div id="ab-stat-list" style="display:flex;flex-direction:column;gap:10px"></div>
+    <div class="divider"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:rgba(0,200,255,0.06);border:1px solid var(--border);border-radius:10px">
+      <div style="font-size:13px;color:var(--muted);font-weight:600;letter-spacing:1px">TOTAL POINTS NEEDED</div>
+      <div style="font-family:'Orbitron',monospace;font-size:20px;font-weight:700;color:var(--gold)" id="ab-total-p">0p</div>
+    </div>
+    <div style="margin-top:10px;font-size:10px;color:var(--muted);text-align:center;letter-spacing:1px">
+      Higher levels allow for the absorption of more elixirs
     </div>
   </div>
 
@@ -1366,8 +1372,6 @@ const worldDifficulties = {
   Hard:   Array.from({length:20}, (_,i) => ({ id: i+41,  name: `World Hard ${i+1}` })),
   Expert: Array.from({length:20}, (_,i) => ({ id: i+61,  name: `World Expert ${i+1}` })),
   Master: Array.from({length:20}, (_,i) => ({ id: i+81,  name: `World Master ${i+1}` })),
-  Hell: Array.from({length:20}, (_,i) => ({ id: i+101,  name: `World Hell ${i+1}` })),
-  Legend: Array.from({length:10}, (_,i) => ({ id: i+121,  name: `World Legend ${i+1}` })),
 };
 
 const worldStats = {
@@ -1391,12 +1395,6 @@ const worldStats = {
   86:{xp:55600,ore:16,coins:167600},87:{xp:57200,ore:16,coins:171200},88:{xp:58400,ore:16,coins:174400},89:{xp:59200,ore:16,coins:180600},90:{xp:60000,ore:17,coins:181600},
   91:{xp:60800,ore:18,coins:183080},92:{xp:62800,ore:19,coins:187080},93:{xp:64800,ore:19,coins:191080},94:{xp:65000,ore:19,coins:195080},95:{xp:66800,ore:19,coins:201080},
   96:{xp:68800,ore:19,coins:203080},97:{xp:70800,ore:19,coins:205480},98:{xp:73000,ore:19,coins:211080},99:{xp:76560,ore:19,coins:215080},100:{xp:78800,ore:19,coins:219080},
-  101:{xp:76000,ore:19,coins:224000},102:{xp:74000,ore:19,coins:226000},103:{xp:78000,ore:19,coins:230000},104:{xp:78000,ore:19,coins:232000},105:{xp:78000,ore:19,coins:238000},
-  106:{xp:80000,ore:19,coins:240000},107:{xp:82000,ore:19,coins:244000},108:{xp:82000,ore:19,coins:246000},109:{xp:84000,ore:19,coins:252000},110:{xp:86000,ore:19,coins:254000},
-  111:{xp:86000,ore:19,coins:258000},112:{xp:86000,ore:19,coins:262000},113:{xp:88000,ore:19,coins:264000},114:{xp:90000,ore:19,coins:268000},115:{xp:90000,ore:19,coins:274000},
-  116:{xp:92000,ore:19,coins:274000},117:{xp:92000,ore:19,coins:280000},118:{xp:93120,ore:19,coins:282000},119:{xp:94190,ore:19,coins:288000},120:{xp:96000,ore:19,coins:290000},
-  121:{xp:96000,ore:19,coins:292000},122:{xp:96000,ore:19,coins:298000},123:{xp:98000,ore:19,coins:300000},124:{xp:100000,ore:19,coins:304000},125:{xp:100000,ore:19,coins:308000},
-  126:{xp:100000,ore:19,coins:312000},127:{xp:102000,ore:19,coins:314000},128:{xp:104000,ore:19,coins:318000},129:{xp:104000,ore:19,coins:322000},130:{xp:106000,ore:19,coins:326000},
 };
 
 let comparisonData = [];
@@ -1443,6 +1441,7 @@ function calcWorld() {
   const extraGold   = parseFloat(document.getElementById('extra-gold').value) || 0;
 
   const timeFactor  = clearTime > 0 ? 3600 / (clearTime + 5) : 0;
+  
   const xph   = timeFactor * (stats.xp * expGainRate + (extraExp * 460));
   const oreh  = timeFactor * stats.ore * oreDropRate;
   const goldh = timeFactor * (stats.coins * goldDropRate + (extraGold * 460));
@@ -1954,209 +1953,107 @@ document.getElementById('rr-autolock-btn').addEventListener('click', () => {
   }
 });
 
-// ===== CONVERT ELIXIR =====
-const CV_TYPES = { hp:'HP', atk:'ATK', cd:'CD', sd:'SD', td:'TD' };
-let cvRowCount = 0;
+// ===== ABSORB ANALYSIS =====
+const AB_PER_P = {
+  attack: 215,
+  hp: 21500,
+  crit: 0.01,
+  skill: 0.002,
+  talisman: 0.001,
+};
 
-function cvFmtAmt(n) {
-  if (n >= 1e12) return (n/1e12).toLocaleString(undefined,{maximumFractionDigits:2})+'T';
-  if (n >= 1e9)  return (n/1e9).toLocaleString(undefined,{maximumFractionDigits:2})+'B';
-  if (n >= 1e6)  return (n/1e6).toLocaleString(undefined,{maximumFractionDigits:2})+'M';
-  if (n >= 1e3)  return (n/1e3).toLocaleString(undefined,{maximumFractionDigits:2})+'K';
+function abParseVal(str) {
+  if (!str) return 0;
+  str = str.toString().trim().toUpperCase();
+  const num = parseFloat(str);
+  if (isNaN(num)) return 0;
+  if (str.endsWith('T')) return num * 1e12;
+  if (str.endsWith('B')) return num * 1e9;
+  if (str.endsWith('M')) return num * 1e6;
+  if (str.endsWith('K')) return num * 1e3;
+  return num;
+}
+
+function abFormatVal(n, isPercent) {
+  if (isPercent) return n.toLocaleString(undefined, {maximumFractionDigits:3}) + '%';
+  // HP/Attack — use game-style K/M/B/T
+  if (n >= 1e12) return (n/1e12).toLocaleString(undefined,{maximumFractionDigits:3}) + 'T';
+  if (n >= 1e9)  return (n/1e9).toLocaleString(undefined,{maximumFractionDigits:3}) + 'B';
+  if (n >= 1e6)  return (n/1e6).toLocaleString(undefined,{maximumFractionDigits:3}) + 'M';
+  if (n >= 1e3)  return (n/1e3).toLocaleString(undefined,{maximumFractionDigits:3}) + 'K';
   return n.toLocaleString();
 }
 
-function cvAddRow(toType='atk', rate=1, tdAmt='', sdAmt='') {
-  const id = cvRowCount++;
-  const div = document.createElement('div');
-  div.id = `cv-row-${id}`;
-  div.style.cssText = `background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px;position:relative`;
-
-  div.innerHTML = `
-    <button onclick="document.getElementById('cv-row-${id}').remove();cvCalc()"
-      style="position:absolute;top:8px;right:10px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;line-height:1">✕</button>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-      <div>
-        <label style="display:block;font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Get Type</label>
-        <select id="cv-to-type-${id}" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;font-family:'Orbitron',monospace;font-size:12px;color:var(--text);outline:none;-webkit-appearance:none">
-          <option value="hp">HP</option>
-          <option value="atk">ATK</option>
-          <option value="cd">CD</option>
-          <option value="sd">SD</option>
-          <option value="td">TD</option>
-          <option value="ts">T/S (TD+SD)</option>
-        </select>
-      </div>
-      <div>
-        <label style="display:block;font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Rate (1 : ?)</label>
-        <input type="number" id="cv-rate-${id}" value="${rate}" min="0.0001" step="0.01"
-          style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;font-family:'Orbitron',monospace;font-size:13px;color:var(--text);outline:none">
-      </div>
-    </div>
-
-    <div id="cv-ts-split-${id}" style="display:none;background:rgba(0,0,0,0.2);border-radius:8px;padding:10px;gap:8px;flex-direction:column">
-      <div style="font-size:10px;color:var(--muted);letter-spacing:1px">SPLIT T/S · leave blank for equal split</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <div>
-          <label style="display:block;font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">TD</label>
-          <input type="number" id="cv-td-${id}" placeholder="auto" min="0" value="${tdAmt}"
-            style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;font-family:'Orbitron',monospace;font-size:13px;color:var(--text);outline:none">
-        </div>
-        <div>
-          <label style="display:block;font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">SD</label>
-          <input type="number" id="cv-sd-${id}" placeholder="auto" min="0" value="${sdAmt}"
-            style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;font-family:'Orbitron',monospace;font-size:13px;color:var(--text);outline:none">
-        </div>
-      </div>
-    </div>
-  `;
-
-  document.getElementById('cv-rows').appendChild(div);
-
-  // set default toType
-  document.getElementById(`cv-to-type-${id}`).value = toType;
-
-  // show T/S split if needed
-  if (toType === 'ts') document.getElementById(`cv-ts-split-${id}`).style.display = 'flex';
-
-  // listeners
-  document.getElementById(`cv-to-type-${id}`).addEventListener('change', () => {
-    const isTS = document.getElementById(`cv-to-type-${id}`).value === 'ts';
-    document.getElementById(`cv-ts-split-${id}`).style.display = isTS ? 'flex' : 'none';
-    cvCalc();
-  });
-  document.getElementById(`cv-rate-${id}`).addEventListener('input', cvCalc);
-  document.getElementById(`cv-td-${id}`).addEventListener('input', cvCalc);
-  document.getElementById(`cv-sd-${id}`).addEventListener('input', cvCalc);
+function abBarColor(pct) {
+  return pct >= 100 ? '#f0c040' : '#00c8ff';
 }
 
-function cvClearRows() {
-  document.getElementById('cv-rows').innerHTML = '';
-  cvRowCount = 0;
-}
+function abCalc() {
+  const stats = [
+    { id:'hp',       label:'HP',                   cur: abParseVal(document.getElementById('ab-hp-cur').value),  max: abParseVal(document.getElementById('ab-hp-max').value),  perP: AB_PER_P.hp,       isPercent: false },
+    { id:'attack',   label:'Attack',               cur: abParseVal(document.getElementById('ab-atk-cur').value), max: abParseVal(document.getElementById('ab-atk-max').value), perP: AB_PER_P.attack,   isPercent: false },
+    { id:'crit',     label:'Critical Hit Damage',  cur: parseFloat(document.getElementById('ab-crit-cur').value)||0,  max: parseFloat(document.getElementById('ab-crit-max').value)||0,  perP: AB_PER_P.crit,     isPercent: true },
+    { id:'skill',    label:'Skill Damage',         cur: parseFloat(document.getElementById('ab-skill-cur').value)||0, max: parseFloat(document.getElementById('ab-skill-max').value)||0, perP: AB_PER_P.skill,    isPercent: true },
+    { id:'talisman', label:'Talisman Damage',      cur: parseFloat(document.getElementById('ab-tal-cur').value)||0,  max: parseFloat(document.getElementById('ab-tal-max').value)||0,  perP: AB_PER_P.talisman, isPercent: true },
+  ];
 
-function cvLoadExample(type) {
-  cvClearRows();
-  if (type === 'cd_atk') {
-    document.getElementById('cv-from-type').value = 'cd';
-    document.getElementById('cv-from-amt').value = 2000000;
-    cvAddRow('atk', 0.6);
-  } else if (type === 'cd_ts') {
-    document.getElementById('cv-from-type').value = 'cd';
-    document.getElementById('cv-from-amt').value = 2000000;
-    cvAddRow('ts', 1.6);
-  } else if (type === 'cd_ts_custom') {
-    document.getElementById('cv-from-type').value = 'cd';
-    document.getElementById('cv-from-amt').value = 2000000;
-    cvAddRow('ts', 1.6, 3000000, 200000);
-  } else if (type === 'multi') {
-    document.getElementById('cv-from-type').value = 'cd';
-    document.getElementById('cv-from-amt').value = 5000000;
-    cvAddRow('atk', 0.6);
-    cvAddRow('ts', 1.6);
+  let totalP = 0;
+  const container = document.getElementById('ab-stat-list');
+  container.innerHTML = '';
+
+  stats.forEach(s => {
+    const diff = Math.max(0, s.max - s.cur);
+    const pNeeded = s.perP > 0 ? Math.ceil(diff / s.perP) : 0;
+    const pAbsorbed = s.max > 0 ? Math.floor(s.cur / s.perP) : 0;
+    totalP += pNeeded;
+    const pct = s.max > 0 ? Math.min(100, (s.cur / s.max) * 100) : 100;
+    const isMaxed = pct >= 100;
+    const color = abBarColor(pct);
+    const curFmt = abFormatVal(s.cur, s.isPercent);
+    const maxFmt = abFormatVal(s.max, s.isPercent);
+
+    container.innerHTML += `
+      <div style="
+        background:rgba(255,255,255,0.03);
+        border:1px solid ${isMaxed ? 'rgba(240,192,64,0.4)' : 'var(--border)'};
+        border-radius:10px;
+        padding:12px 14px;
+        ${isMaxed ? 'box-shadow:0 0 12px rgba(240,192,64,0.15)' : ''}
+      ">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+          <span style="font-weight:700;font-size:14px;color:${isMaxed ? '#f0c040' : 'var(--white)'}">
+            ${s.label} ${isMaxed ? '✨' : ''}
+          </span>
+          <span style="font-family:'Orbitron',monospace;font-size:12px;color:${color}">
+            ${pNeeded > 0 ? '+' + pNeeded.toLocaleString() + 'p needed' : 'MAXED'}
+          </span>
+        </div>
+        <div style="background:rgba(0,0,0,0.3);border-radius:20px;height:10px;margin-bottom:6px;overflow:hidden">
+          <div style="height:100%;width:${pct.toFixed(1)}%;background:${color};border-radius:20px;transition:width 0.4s ease"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:'Orbitron',monospace">
+          <span>${curFmt} / ${maxFmt}</span>
+          <span style="color:${isMaxed ? '#f0c040' : 'var(--muted)'}">absorbed: ${pAbsorbed.toLocaleString()}p</span>
+        </div>
+      </div>
+    `;
+    const allMaxed = stats.every(s => s.max > 0 && s.cur >= s.max);
+  const resultCard = document.getElementById('ab-result-card');
+  if (allMaxed) {
+    resultCard.classList.add('rgb-card');
+    document.getElementById('ab-total-p').textContent = '✨ ALL MAXED!';
+  } else {
+    resultCard.classList.remove('rgb-card');
+    document.getElementById('ab-total-p').textContent = totalP.toLocaleString() + 'p';
   }
-  cvCalc();
-  // scroll to result
-  setTimeout(() => document.getElementById('cv-result-card').scrollIntoView({behavior:'smooth'}), 200);
-}
-
-function cvCalc() {
-  const fromAmt  = parseFloat(document.getElementById('cv-from-amt').value) || 0;
-  const fromType = document.getElementById('cv-from-type').value;
-  const rows     = document.getElementById('cv-rows').children;
-
-  if (fromAmt <= 0 || rows.length === 0) {
-    document.getElementById('cv-result-card').style.display = 'none';
-    return;
-  }
-
-  const resultList = document.getElementById('cv-result-list');
-  resultList.innerHTML = '';
-
-  // FROM row
-  resultList.innerHTML += `
-    <div style="display:flex;justify-content:space-between;align-items:center;
-      padding:12px 14px;background:rgba(255,107,53,0.08);
-      border:1px solid rgba(255,107,53,0.35);border-radius:8px">
-      <div>
-        <div style="font-size:10px;color:var(--accent2);letter-spacing:2px;margin-bottom:2px">FROM</div>
-        <div style="font-size:14px;font-weight:700;color:var(--accent2)">${CV_TYPES[fromType] || fromType.toUpperCase()}</div>
-      </div>
-      <div style="font-family:'Orbitron',monospace;font-size:18px;font-weight:700;color:var(--accent2)">
-        ${cvFmtAmt(fromAmt)}
-      </div>
-    </div>
-  `;
-
-  // arrow
-  resultList.innerHTML += `<div style="text-align:center;color:var(--muted);font-size:18px;margin:-2px 0">↓</div>`;
-
-  // each row
-  Array.from(rows).forEach(row => {
-    const idMatch = row.id.match(/cv-row-(\d+)/);
-    if (!idMatch) return;
-    const id     = idMatch[1];
-    const toType = document.getElementById(`cv-to-type-${id}`)?.value;
-    const rate   = parseFloat(document.getElementById(`cv-rate-${id}`)?.value) || 1;
-    const total  = fromAmt * rate;
-
-    if (toType === 'ts') {
-      const tdRaw = parseFloat(document.getElementById(`cv-td-${id}`)?.value);
-      const sdRaw = parseFloat(document.getElementById(`cv-sd-${id}`)?.value);
-      let td, sd;
-      if (!isNaN(tdRaw) && !isNaN(sdRaw)) { td = tdRaw; sd = sdRaw; }
-      else if (!isNaN(tdRaw))             { td = tdRaw; sd = total - tdRaw; }
-      else if (!isNaN(sdRaw))             { sd = sdRaw; td = total - sdRaw; }
-      else                                { td = total/2; sd = total/2; }
-
-      resultList.innerHTML += `
-        <div style="padding:12px 14px;background:rgba(0,200,255,0.06);border:1px solid var(--border);border-radius:8px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-            <div>
-              <div style="font-size:10px;color:var(--accent);letter-spacing:2px;margin-bottom:2px">TO · rate 1 : ${rate}</div>
-              <div style="font-size:14px;font-weight:700;color:var(--white)">T/S (TD + SD)</div>
-            </div>
-            <div style="font-family:'Orbitron',monospace;font-size:18px;font-weight:700;color:var(--white)">${cvFmtAmt(total)}</div>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-            <div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:8px 12px;text-align:center">
-              <div style="font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:4px">TD</div>
-              <div style="font-family:'Orbitron',monospace;font-size:14px;font-weight:700;color:var(--gold)">${cvFmtAmt(td)}</div>
-            </div>
-            <div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:8px 12px;text-align:center">
-              <div style="font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:4px">SD</div>
-              <div style="font-family:'Orbitron',monospace;font-size:14px;font-weight:700;color:var(--gold)">${cvFmtAmt(sd)}</div>
-            </div>
-          </div>
-        </div>
-      `;
-    } else {
-      resultList.innerHTML += `
-        <div style="display:flex;justify-content:space-between;align-items:center;
-          padding:12px 14px;background:rgba(0,200,255,0.06);
-          border:1px solid var(--border);border-radius:8px">
-          <div>
-            <div style="font-size:10px;color:var(--accent);letter-spacing:2px;margin-bottom:2px">TO · rate 1 : ${rate}</div>
-            <div style="font-size:14px;font-weight:700;color:var(--white)">${CV_TYPES[toType] || toType.toUpperCase()}</div>
-          </div>
-          <div style="font-family:'Orbitron',monospace;font-size:18px;font-weight:700;color:var(--white)">${cvFmtAmt(total)}</div>
-        </div>
-      `;
-    }
+  resultCard.style.display = '';
   });
 
-  document.getElementById('cv-result-card').style.display = '';
+  document.getElementById('ab-total-p').textContent = totalP.toLocaleString() + 'p';
+  document.getElementById('ab-result-card').style.display = '';
 }
 
-document.getElementById('cv-add-btn').addEventListener('click', () => cvAddRow());
-document.getElementById('cv-calc-btn').addEventListener('click', cvCalc);
-document.getElementById('cv-from-amt').addEventListener('input', cvCalc);
-document.getElementById('cv-from-type').addEventListener('change', cvCalc);
-
-// default rows
-cvAddRow('atk', 0.6);
-cvAddRow('ts', 1.6);
+document.getElementById('ab-calc-btn').addEventListener('click', abCalc);
 
 // ===== PAGE NAV =====
 document.querySelectorAll('.nav-link[data-page]').forEach(link => {
